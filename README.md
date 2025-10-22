@@ -1,4 +1,4 @@
-# live_new_app
+# Viedo Streaming app
 
 A Flutter video meeting app using VideoSDK with GetX state management. Users can create or join rooms, toggle mic/cam, and view participant streams.
 
