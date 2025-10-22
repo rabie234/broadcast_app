@@ -1,16 +1,37 @@
 # live_new_app
 
-A new Flutter project.
+A Flutter video meeting app using VideoSDK with GetX state management. Users can create or join rooms, toggle mic/cam, and view participant streams.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Create a VideoSDK room via REST and join with a token.
+- Manage meeting state with a GetX controller around VideoSDK Room events.
+- Render participant video tiles and basic meeting controls (mic, cam, leave).
 
-A few resources to get you started if this is your first Flutter project:
+## Tech stack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Flutter app entry in lib/main.dart with GetMaterialApp and JoinScreen as home.
+- VideoSDK for real-time audio/video (Room, Participant, Events).
+- Wakelock to keep the screen on during meetings.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Architecture
+
+The flow connects JoinScreen, a small API helper, MeetingScreen, and a GetX controller around VideoSDK.
+
+```mermaid
+sequenceDiagram
+    title Create and join a meeting
+    participant U as User
+    participant J as JoinScreen
+    participant A as ApiService
+    participant M as MeetingScreen
+    participant C as MeetingController
+    U->>J: Tap Create Meeting
+    J->>A: POST createMeeting
+    A-->>J: roomId
+    J->>M: Navigate with roomId + token
+    M->>C: createRoom(roomId, token)
+    C->>VideoSDK: createRoom + join
+    VideoSDK-->>C: roomJoined, participant events
+    C-->>M: update() via GetX
+    M-->>U: ParticipantTile grid and controls
